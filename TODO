@@ -1,0 +1,2 @@
+1 i )IN getfeatures.extract normalize the image using transforms. And probably resize using custom transforms/ It makes the code clean
+1 ii)Paralally co ordinate with Swapnil to extract features of the whole dataset
