@@ -17,13 +17,25 @@ class getfeatures():
 
 
     def extract(self, img):
+        reshapedimage = img
         reshapedimage = cv2.resize(img,(299, 299), interpolation = cv2.INTER_CUBIC)
         transform = transforms.ToTensor()
-        transformedimage = transform(reshapedimage.astype(float))
-        # normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])
-        # normalizedimage = normalize(reshapedimage.astype(float))
+        # transformedimage = transform(reshapedimage.astype(float))
+        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])
+        # preprocess = transforms.Compose([
+        #     transforms.Scale(299),
+        #     transforms.ToTensor(),
+        #     normalize
+        #     ])
+        preprocess = transforms.Compose([
+            # transforms.Scale(299,299),
+            transforms.ToTensor(),
+            normalize
+            ])
+        print(type(reshapedimage[0][0][0]))
+        transformedimage = preprocess(reshapedimage)
         image_variable = Variable(transformedimage)
         image_variable = image_variable.float()
         image_variable = image_variable.unsqueeze(0)
         prediction = self.inceptionfeaturesmodel(image_variable)
-        return prediction[0]
+        return prediction[0].data.cpu().numpy()
