@@ -1,6 +1,6 @@
-1 i )IN getfeatures.extract normalize the image using transforms. And probably resize using custom transforms/ It makes the code clean
-1 ii)Paralally co ordinate with Swapnil to extract features of the whole dataset
+1 i )IN getfeatures.extract normalize the image using transforms. And probably resize using custom transforms/ It makes the code clean : done
+1 ii)Paralally co ordinate with Swapnil to extract features of the whole dataset : done
 
 Now that we have the dataset
-2) Make the dataloaders
+2) Make the dataloaders : done
 3)MAke LSTM
