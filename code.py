@@ -59,7 +59,7 @@ class FramesDataSet(Dataset):
 
 
 input_size = 2048
-num_epochs = 100
+num_epochs = 50
 learning_rate = 0.001
 batch_size = 5
 filename = './sample_output.csv'
@@ -170,3 +170,26 @@ for epoch in range(num_epochs):
         if (i+1) % 3 == 0:
             print(len(trainloader))
             print ('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f' %(epoch+1, num_epochs, i+1, len(trainloader)//batch_size, loss.data[0]))
+
+
+
+correct = 0
+total = 0
+for data in testloader:
+    images, labels = data
+    images = Variable(images.type(dtypeim))
+    labels = Variable(labels.type(dtypelab))
+    images = images.cuda()
+    labels = labels.cuda()
+    outputs = test(images)
+    _, predicted = torch.max(outputs.data, 1)
+    print(predicted)
+    print(labels)
+    total += labels.size(0)
+    correct += (predicted == labels[:, 0].data).sum()
+    print(correct)
+    print(total)
+    print("------------")
+
+print('Accuracy of the network on the test images: %d %%' % (
+    100 * correct / total))

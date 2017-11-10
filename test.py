@@ -309,3 +309,21 @@ out, _ = lstm(inp)
 
 # hidden = (h_0 , c_0)
 # out, hidden = lstm(inp)
+
+
+correct = 0
+total = 0
+for data in testloader:
+    images, labels = data
+    images = Variable(images.type(dtypeim))
+    labels = Variable(labels.type(dtypelab))
+    images = images.cuda()
+    labels = labels.cuda()
+    outputs = test(images)
+    _, predicted = torch.max(outputs.data, 1)
+    print(predicted)
+    total += labels.size(0)
+    correct += (predicted == labels.data).sum()
+
+print('Accuracy of the network on the test images: %d %%' % (
+    100 * correct / total))
