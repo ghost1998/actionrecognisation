@@ -207,3 +207,105 @@ class inceptionfeatures(nn.Module):
 inception = models.inception_v3(pretrained=True)
 inceptionfeaturesmodel = inceptionfeatures(inception)
 prediction = inceptionfeaturesmodel(test_value)
+
+def rdline(filename, i):
+    number = i-1
+    with open(filename) as fp:
+        for line in fp:
+            number-=1
+            if number == 0:
+                return line
+
+def rdline(filename, i):
+    number = i
+    with open(filename) as fp:
+        for line in fp:
+            if number == 0:
+                return line
+            number-=1
+
+def getlength(filename):
+    number = 0
+    with open(filename) as fp:
+        for line in fp:
+            number+=1
+    return number
+
+from numpy import genfromtxt
+numpydata = genfromtxt('sample_output.csv', delimiter=',')
+featuresize = 2048
+
+
+# ith Sample
+numpydata[i].shape
+length = len(numpydata)
+
+
+ithline = numpydata[i]
+featuresrownumpy = ithline[:-1]
+featuresnumpy = featuresrownumpy.reshape(-1, featuresize)
+features = torch.from_numpy(featuresnumpy.astype(float))
+# features = features.double()
+
+labelnumpy = ithline[-1:]
+label = torch.from_numpy(labelnumpy.astype(float))
+# label = label.double()
+
+class FramesDataSet(Dataset):
+    def __init__(self, filepath, featuresize=2048):
+        self.filepath = filepath
+        self.length = getlength(self.filepath)
+        self.featuresize = featuresize
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, idx):
+        #  print(idx)
+         ithlinestring = rdline(self.filepath , idx)
+         ithlinelist = (ithlinestring.split(','))
+         ithline = np.array(ithlinelist)
+         ithline = ithline.astype('float')
+
+         featuresrownumpy = ithline[:-1]
+         featuresnumpy = featuresrownumpy.reshape(-1, self.featuresize)
+         features = torch.from_numpy(featuresnumpy.astype(float))
+         features = features.double()
+
+         labelnumpy = ithline[-1:]
+         label = torch.from_numpy(labelnumpy.astype(float))
+         label = label.double()
+
+         return features , label
+
+batch_size = 5
+testloaderT = FramesDataSet(filepath = './sample_output.csv' , featuresize = 2048)
+testloader = DataLoader(testloaderT, batch_size= batch_size,shuffle=True)
+
+len(testloader)
+
+for num,i in enumerate(testloader):
+    print(num)
+    print(i)
+    # print(type((len(i[0]))))
+    # print(len(i[1]))
+    print("--------")
+
+
+
+batch_size = 7
+seq_len = 10
+num_layers =3
+hidden_size = 4
+input_size = 2048
+
+lstm = nn.LSTM(input_size = input_size, hidden_size = hidden_size , num_layers =num_layers , batch_first  = True)
+inp = torch.autograd.Variable(torch.randn(batch_size, seq_len, input_size))
+out, _ = lstm(inp)
+# h_0 = torch.autograd.Variable(torch.randn(batch_size, seq_len, hidden_size))
+# c_0 = torch.autograd.Variable(torch.randn(batch_size, seq_len, hidden_size))
+# h_0 = torch.autograd.Variable(torch.randn( seq_len,batch_size, hidden_size))
+# c_0 = torch.autograd.Variable(torch.randn( seq_len,batch_size, hidden_size))
+
+# hidden = (h_0 , c_0)
+# out, hidden = lstm(inp)
