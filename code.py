@@ -58,6 +58,15 @@ class FramesDataSet(Dataset):
          return features , label
 
 
+input_size = 2048
+num_epochs = 100
+learning_rate = 0.001
+batch_size = 5
+filename = './sample_output.csv'
+featuresize = 2048
+seq_len = 30
+hidden_size = 5
+num_layers = 3
 
 
 trainloaderT = FramesDataSet(filepath = filename , featuresize = featuresize)
@@ -87,6 +96,7 @@ class VanilaLSTM(nn.Module):
 
 
     def forward(self, x):
+        self.lstm.flatten_parameters()
         out , _ = self.lstm(x)
         out = out.contiguous().view(-1, seq_len * hidden_size )
         out = self.fc(out)
@@ -94,14 +104,7 @@ class VanilaLSTM(nn.Module):
         # out = out.view(-1 ,self.seq_len * self.hidden_size)
         return out
 
-input_size = 2048
-num_epochs = 10
-learning_rate = 0.001
-batch_size = 5
-filename = './sample_output.csv'
-featuresize = 2048
-seq_len = 30
-hidden_size = 5
+
 
 
 
@@ -112,13 +115,15 @@ hidden_size = 5
 
 # torch.cuda.set_device(1)
 test = VanilaLSTM(input_size=input_size, hidden_size= hidden_size , num_layers=num_layers , seq_len=seq_len)
-# test.cuda()
+test.cuda()
 # criterion = nn.MSELoss()
 # criterion =  nn.CrossEntropyLoss()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(test.parameters(), lr=learning_rate)
-# dtype = torch.cuda(0).FloatTensor
-dtype = torch.FloatTensor
+# dtypeim = torch.cuda(0).FloatTensor
+dtypeim = torch.FloatTensor
+# dtypelab = torch.cuda(0).LongTensor
+dtypelab = torch.LongTensor
 
 
 
@@ -131,9 +136,11 @@ for epoch in range(num_epochs):
         images = it[0]
         labels = it[1]
         # print((images.size()))
-        images = Variable(images.type(dtype))
-        labels = Variable(labels.type(dtype))
-        labels = labels.type(torch.LongTensor)
+        images = Variable(images.type(dtypeim))
+        labels = Variable(labels.type(dtypelab))
+        images = images.cuda()
+        labels = labels.cuda()
+        # labels = labels.type(torch.LongTensor)
 
         # images = Variable(images.type(dtype)).cuda()
         # labels = Variable(labels.type(dtype)).cuda()
