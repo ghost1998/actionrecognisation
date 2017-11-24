@@ -59,8 +59,8 @@ class FramesDataSet(Dataset):
 
 
 input_size = 2048
-num_epochs = 50
-learning_rate = 0.001
+num_epochs = 5
+learning_rate = 0.01
 batch_size = 5
 filename = './sample_output.csv'
 featuresize = 2048
@@ -88,9 +88,9 @@ class VanilaLSTM(nn.Module):
 
         # View is applied here
         self.fc = nn.Sequential(
-        nn.Linear(seq_len * hidden_size , hidden_size),
+        nn.Linear(self.seq_len * self.hidden_size , self.hidden_size),
         nn.Tanh(),
-        nn.Linear(hidden_size , 32),
+        nn.Linear(self.hidden_size , 32),
         nn.Hardtanh(),
         nn.Linear(32 , 12))
 
@@ -98,7 +98,7 @@ class VanilaLSTM(nn.Module):
     def forward(self, x):
         self.lstm.flatten_parameters()
         out , _ = self.lstm(x)
-        out = out.contiguous().view(-1, seq_len * hidden_size )
+        out = out.contiguous().view(-1, self.seq_len * self.hidden_size )
         out = self.fc(out)
 
         # out = out.view(-1 ,self.seq_len * self.hidden_size)
@@ -125,71 +125,93 @@ dtypeim = torch.FloatTensor
 # dtypelab = torch.cuda(0).LongTensor
 dtypelab = torch.LongTensor
 
+params = {}
+params['model'] = test
+params['num_epochs'] = num_epochs
+params['trainloader'] = trainloader
+params['optimizer'] = optimizer
+params['criterion']= criterion
+params['dtypeim'] = dtypeim
+params['dtypelab'] = dtypelab
+params['batch_size'] = batch_size
+params['testloader'] = testloader
+#Train function
+from trainmodel import train
+a = train(params)
 
+from testmodel import test
+t = test(params)
 
 # Training
-for epoch in range(num_epochs):
-    print("Epoch number ----->" + str(epoch))
-    for i, it in enumerate(trainloader):
-        # print(it[0].size())
-        # print(it[1].size())
-        images = it[0]
-        labels = it[1]
-        # print((images.size()))
-        images = Variable(images.type(dtypeim))
-        labels = Variable(labels.type(dtypelab))
-        images = images.cuda()
-        labels = labels.cuda()
-        # labels = labels.type(torch.LongTensor)
+# for epoch in range(num_epochs):
+#     print("Epoch number ----->" + str(epoch))
+#     for i, it in enumerate(trainloader):
+#         params['model'] = test
+#         params['num_epochs'] = num_epochs
+#         params['trainloader'] = trainloader
+#         params['optimizer'] = optimizer
+#         params['criterion']= criterion
+#
+#
+#         # print(it[0].size())
+#         # print(it[1].size())
+#         images = it[0]
+#         labels = it[1]
+#         # print((images.size()))
+#         images = Variable(images.type(dtypeim))
+#         labels = Variable(labels.type(dtypelab))
+#         images = images.cuda()
+#         labels = labels.cuda()
+#         # labels = labels.type(torch.LongTensor)
+#
+#         # images = Variable(images.type(dtype)).cuda()
+#         # labels = Variable(labels.type(dtype)).cuda()
+#         # print("conv. to varialbes and cast to dtype")
+#         # break
+#         # images = Variable(images)
+#         # labels = Variable(labels)
+#
+#         optimizer.zero_grad()
+#         # print(images)
+#         # print(labels)
+#         # break
+#         output = test(images)
+#         # print(output)
+#         # print("got output")
+#         # break
+#         # print("got output")
+#         # print(output.size())
+#         # break
+#         loss = criterion(output, labels[:,0])
+#         # print("got loss")
+#         loss.backward()
+#         # print("back")
+#         optimizer.step()
+#         # print("done")
+#
+#         if (i+1) % 3 == 0:
+#             print(len(trainloader))
+#             print ('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f' %(epoch+1, num_epochs, i+1, len(trainloader)//batch_size, loss.data[0]))
+#
 
-        # images = Variable(images.type(dtype)).cuda()
-        # labels = Variable(labels.type(dtype)).cuda()
-        # print("conv. to varialbes and cast to dtype")
-        # break
-        # images = Variable(images)
-        # labels = Variable(labels)
 
-        optimizer.zero_grad()
-        # print(images)
-        # print(labels)
-        # break
-        output = test(images)
-        # print(output)
-        # print("got output")
-        # break
-        # print("got output")
-        # print(output.size())
-        # break
-        loss = criterion(output, labels[:,0])
-        # print("got loss")
-        loss.backward()
-        # print("back")
-        optimizer.step()
-        # print("done")
-
-        if (i+1) % 3 == 0:
-            print(len(trainloader))
-            print ('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f' %(epoch+1, num_epochs, i+1, len(trainloader)//batch_size, loss.data[0]))
-
-
-
-correct = 0
-total = 0
-for data in testloader:
-    images, labels = data
-    images = Variable(images.type(dtypeim))
-    labels = Variable(labels.type(dtypelab))
-    images = images.cuda()
-    labels = labels.cuda()
-    outputs = test(images)
-    _, predicted = torch.max(outputs.data, 1)
-    print(predicted)
-    print(labels)
-    total += labels.size(0)
-    correct += (predicted == labels[:, 0].data).sum()
-    print(correct)
-    print(total)
-    print("------------")
-
-print('Accuracy of the network on the test images: %d %%' % (
-    100 * correct / total))
+# correct = 0
+# total = 0
+# for data in testloader:
+#     images, labels = data
+#     images = Variable(images.type(dtypeim))
+#     labels = Variable(labels.type(dtypelab))
+#     images = images.cuda()
+#     labels = labels.cuda()
+#     outputs = test(images)
+#     _, predicted = torch.max(outputs.data, 1)
+#     print(predicted)
+#     print(labels)
+#     total += labels.size(0)
+#     correct += (predicted == labels[:, 0].data).sum()
+#     print(correct)
+#     print(total)
+#     print("------------")
+#
+# print('Accuracy of the network on the test images: %d %%' % (
+#     100 * correct / total))
