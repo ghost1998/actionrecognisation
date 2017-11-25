@@ -31,8 +31,8 @@ def train(params):
             images = it[0]
             labels = it[1]
             # print((images.size()))
-            images = Variable(images.type(dtypeim))
-            labels = Variable(labels.type(dtypelab))
+            images = Variable(images.type(dtypeim) , requires_grad=False)
+            labels = Variable(labels.type(dtypelab), requires_grad=False)
             images = images.cuda()
             labels = labels.cuda()
             # labels = labels.type(torch.LongTensor)
@@ -61,8 +61,7 @@ def train(params):
             # print("back")
             optimizer.step()
             # print("done")
-
             if (i+1) % 3 == 0:
-                print(len(trainloader))
+                # print(len(trainloader))
                 print ('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f' %(epoch+1, num_epochs, i+1, len(trainloader)//batch_size, loss.data[0]))
     return test

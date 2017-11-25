@@ -50,7 +50,6 @@ class FramesDataSet(Dataset):
          featuresnumpy = featuresrownumpy.reshape(-1, self.featuresize)
          features = torch.from_numpy(featuresnumpy.astype(float))
          features = features.double()
-
          labelnumpy = ithline[-1:]
          label = torch.from_numpy(labelnumpy.astype(float))
          label = label.double()
@@ -59,13 +58,14 @@ class FramesDataSet(Dataset):
 
 
 input_size = 2048
-num_epochs = 5
+num_epochs = 2
 learning_rate = 0.01
-batch_size = 5
-filename = './sample_output.csv'
+batch_size = 20
+# filename = './sample_output.csv'
+filename = '/tmp/anjan/output.csv'
 featuresize = 2048
-seq_len = 30
-hidden_size = 5
+seq_len = 10
+hidden_size = 90
 num_layers = 3
 
 
@@ -92,7 +92,8 @@ class VanilaLSTM(nn.Module):
         nn.Tanh(),
         nn.Linear(self.hidden_size , 32),
         nn.Hardtanh(),
-        nn.Linear(32 , 12))
+        nn.Linear(32 , 3) ,
+        nn.Softmax())
 
 
     def forward(self, x):
@@ -135,12 +136,21 @@ params['dtypeim'] = dtypeim
 params['dtypelab'] = dtypelab
 params['batch_size'] = batch_size
 params['testloader'] = testloader
-#Train function
-from trainmodel import train
-a = train(params)
+from trainmodel import train as Train
+from testmodel import test as Test
 
-from testmodel import test
-t = test(params)
+
+num_epochs = 1
+learning_rate = 0.01
+optimizer = torch.optim.Adam(test.parameters(), lr=learning_rate)
+params['num_epochs'] = num_epochs
+params['optimizer'] = optimizer
+#Train function
+
+test = Train(params)
+# test.save_state_dict('mytraining.pt')
+torch.save(test, './sample.pt')
+t = Test(params)
 
 # Training
 # for epoch in range(num_epochs):
