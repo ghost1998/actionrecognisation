@@ -12,6 +12,8 @@ import torch.utils.data as utils
 import cv2
 import csv
 from torch.utils.data import Dataset, DataLoader
+from trainmodel import train as Train
+from testmodel import test as Test
 
 
 def rdline(filename, i):
@@ -60,11 +62,11 @@ class FramesDataSet(Dataset):
 input_size = 2048
 num_epochs = 2
 learning_rate = 0.01
-batch_size = 20
-# filename = './sample_output.csv'
-filename = '/tmp/anjan/output.csv'
+batch_size = 5
+filename = './sample_output.csv'
+# filename = '/tmp/anjan/output.csv'
 featuresize = 2048
-seq_len = 10
+seq_len = 30
 hidden_size = 90
 num_layers = 3
 
@@ -107,23 +109,13 @@ class VanilaLSTM(nn.Module):
 
 
 
-
-
-
-
-
-
-
 # torch.cuda.set_device(1)
 test = VanilaLSTM(input_size=input_size, hidden_size= hidden_size , num_layers=num_layers , seq_len=seq_len)
 test.cuda()
-# criterion = nn.MSELoss()
-# criterion =  nn.CrossEntropyLoss()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(test.parameters(), lr=learning_rate)
-# dtypeim = torch.cuda(0).FloatTensor
+
 dtypeim = torch.FloatTensor
-# dtypelab = torch.cuda(0).LongTensor
 dtypelab = torch.LongTensor
 
 params = {}
@@ -136,92 +128,18 @@ params['dtypeim'] = dtypeim
 params['dtypelab'] = dtypelab
 params['batch_size'] = batch_size
 params['testloader'] = testloader
-from trainmodel import train as Train
-from testmodel import test as Test
+params['learning_rate'] = learning_rate
 
 
-num_epochs = 1
-learning_rate = 0.01
-optimizer = torch.optim.Adam(test.parameters(), lr=learning_rate)
+
+
+num_epochs = 2
 params['num_epochs'] = num_epochs
-params['optimizer'] = optimizer
+# params['model'] = test
+
 #Train function
+params['model']  = Train(params)
 
-test = Train(params)
-# test.save_state_dict('mytraining.pt')
-torch.save(test, './sample.pt')
+# params['model'] = test
+# torch.save(test, './sample.pt')
 t = Test(params)
-
-# Training
-# for epoch in range(num_epochs):
-#     print("Epoch number ----->" + str(epoch))
-#     for i, it in enumerate(trainloader):
-#         params['model'] = test
-#         params['num_epochs'] = num_epochs
-#         params['trainloader'] = trainloader
-#         params['optimizer'] = optimizer
-#         params['criterion']= criterion
-#
-#
-#         # print(it[0].size())
-#         # print(it[1].size())
-#         images = it[0]
-#         labels = it[1]
-#         # print((images.size()))
-#         images = Variable(images.type(dtypeim))
-#         labels = Variable(labels.type(dtypelab))
-#         images = images.cuda()
-#         labels = labels.cuda()
-#         # labels = labels.type(torch.LongTensor)
-#
-#         # images = Variable(images.type(dtype)).cuda()
-#         # labels = Variable(labels.type(dtype)).cuda()
-#         # print("conv. to varialbes and cast to dtype")
-#         # break
-#         # images = Variable(images)
-#         # labels = Variable(labels)
-#
-#         optimizer.zero_grad()
-#         # print(images)
-#         # print(labels)
-#         # break
-#         output = test(images)
-#         # print(output)
-#         # print("got output")
-#         # break
-#         # print("got output")
-#         # print(output.size())
-#         # break
-#         loss = criterion(output, labels[:,0])
-#         # print("got loss")
-#         loss.backward()
-#         # print("back")
-#         optimizer.step()
-#         # print("done")
-#
-#         if (i+1) % 3 == 0:
-#             print(len(trainloader))
-#             print ('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f' %(epoch+1, num_epochs, i+1, len(trainloader)//batch_size, loss.data[0]))
-#
-
-
-# correct = 0
-# total = 0
-# for data in testloader:
-#     images, labels = data
-#     images = Variable(images.type(dtypeim))
-#     labels = Variable(labels.type(dtypelab))
-#     images = images.cuda()
-#     labels = labels.cuda()
-#     outputs = test(images)
-#     _, predicted = torch.max(outputs.data, 1)
-#     print(predicted)
-#     print(labels)
-#     total += labels.size(0)
-#     correct += (predicted == labels[:, 0].data).sum()
-#     print(correct)
-#     print(total)
-#     print("------------")
-#
-# print('Accuracy of the network on the test images: %d %%' % (
-#     100 * correct / total))

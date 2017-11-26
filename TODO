@@ -1,6 +1,3 @@
-1 i )IN getfeatures.extract normalize the image using transforms. And probably resize using custom transforms/ It makes the code clean : done
-1 ii)Paralally co ordinate with Swapnil to extract features of the whole dataset : done
-
-Now that we have the dataset
-2) Make the dataloaders : done
-3)MAke LSTM
+1) Instead of trainmodel and testmodel and code just keep all the code in the same file sequenctially. DO NOT use functions for train and test.
+2)seq_len is the number of features. batch_size is he size of minibatch. In order to see if it is working change hidden_size to 10 and num_layers = 2, the
+accuracy goes to 85 percent and then drops after that. 

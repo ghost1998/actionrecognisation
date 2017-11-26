@@ -23,6 +23,8 @@ def train(params):
     dtypeim = params['dtypeim']
     dtypelab =  params['dtypelab']
     batch_size = params['batch_size']
+    learning_rate = params['learning_rate']
+    # optimizer = torch.optim.Adam(test.parameters(), lr=learning_rate)
     for epoch in range(num_epochs):
         print("Epoch number ----->" + str(epoch))
         for i, it in enumerate(trainloader):

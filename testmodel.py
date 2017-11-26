@@ -18,7 +18,7 @@ def test(params):
     test = params['model']
     num_epochs = params['num_epochs']
     trainloader = params['trainloader']
-    optimizer = params['optimizer']
+    # optimizer = params['optimizer']
     criterion = params['criterion']
     dtypeim = params['dtypeim']
     dtypelab =  params['dtypelab']
