@@ -12,7 +12,7 @@ import torch.utils.data as utils
 import cv2
 import csv
 from torch.utils.data import Dataset, DataLoader
-
+import time
 
 def test(params):
     test = params['model']
@@ -32,7 +32,9 @@ def test(params):
         labels = Variable(labels.type(dtypelab))
         images = images.cuda()
         labels = labels.cuda()
+        # st_time = time.time()
         outputs = test(images)
+        # print(time.time() - st_time)
         _, predicted = torch.max(outputs.data, 1)
         print(predicted)
         print(labels)

@@ -1,3 +1,9 @@
-1) Instead of trainmodel and testmodel and code just keep all the code in the same file sequenctially. DO NOT use functions for train and test.
+TODO
+
+1) Instead of trainmodel and testmodel and code just keep all the code in the same file sequenctially. DO NOT use functions for train and test. Update : Lite, the functions are working well.
 2)seq_len is the number of features. batch_size is he size of minibatch. In order to see if it is working change hidden_size to 10 and num_layers = 2, the
-accuracy goes to 85 percent and then drops after that. 
+accuracy goes to 85 percent and then drops after that.
+3) loss.data[0] is the loss in training. I commented it at line 66. Save the model at least cost.
+4) Run on ipython, so that you wont lose the model.
+5) In code.py I have commented model1 model2 etc, for parameters, they have different params, so run all and takr the best. feel free to try better params according to your descretion
+6) Batch size, learning rate, I did not touch it, you do it on ur descretion. I have no clue. Keep me updates about accuracies. Note down the accuracies

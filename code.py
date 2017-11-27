@@ -14,7 +14,7 @@ import csv
 from torch.utils.data import Dataset, DataLoader
 from trainmodel import train as Train
 from testmodel import test as Test
-
+import time
 
 def rdline(filename, i):
     number = i
@@ -32,51 +32,159 @@ def getlength(filename):
     return number
 
 
+#
+# featurelist = []
+# labellist = []
+# while(idx<filelen):
+#      ithlinestring = rdline(self.filepath , idx)
+#      ithlinelist = (ithlinestring.split(','))
+#      ithline = np.array(ithlinelist)
+#      ithline = ithline.astype('float')
+#      featuresrownumpy = ithline[:-1]
+#      featuresnumpy = featuresrownumpy.reshape(-1, self.featuresize)
+#      features = torch.from_numpy(featuresnumpy.astype(float))
+#      features = features.double()
+#      labelnumpy = ithline[-1:]
+#      label = torch.from_numpy(labelnumpy.astype(float))
+#      label = label.double()
+#      featurelist.append(features)
+#      labellist.append(label)
+#      idx = idx+1
+#      print(idx)
+# features = np.asarray(featurelist)
+# labels = np.asarray(labellist)
+
+
 class FramesDataSet(Dataset):
     def __init__(self, filepath, featuresize=2048):
         self.filepath = filepath
         self.length = getlength(self.filepath)
         self.featuresize = featuresize
+        self.c =0
+        filelen = getlength(filepath)
+        # print(filelen)
+        idx = 0
+        featurelist = []
+        labellist = []
+        while(idx<filelen):
+             ithlinestring = rdline(self.filepath , idx)
+             ithlinelist = (ithlinestring.split(','))
+             ithline = np.array(ithlinelist)
+             ithline = ithline.astype('float')
+             featuresrownumpy = ithline[:-1]
+             featuresnumpy = featuresrownumpy.reshape(-1, self.featuresize)
+             features = torch.from_numpy(featuresnumpy.astype(float))
+             features = features.double()
+             labelnumpy = ithline[-1:]
+             label = torch.from_numpy(labelnumpy.astype(float))
+             label = label.double()
+             featurelist.append(features)
+             labellist.append(label)
+             idx = idx+1
+             print(idx)
+        self.features = np.asarray(featurelist)
+        self.labels = np.asarray(labellist)
+        # print(features.shape)
+
+
 
     def __len__(self):
         return self.length
 
     def __getitem__(self, idx):
-        #  print(idx)
-         ithlinestring = rdline(self.filepath , idx)
-         ithlinelist = (ithlinestring.split(','))
-         ithline = np.array(ithlinelist)
-         ithline = ithline.astype('float')
-
-         featuresrownumpy = ithline[:-1]
-         featuresnumpy = featuresrownumpy.reshape(-1, self.featuresize)
-         features = torch.from_numpy(featuresnumpy.astype(float))
-         features = features.double()
-         labelnumpy = ithline[-1:]
-         label = torch.from_numpy(labelnumpy.astype(float))
-         label = label.double()
-
-         return features , label
+        # print("here")
+        feature = self.features[idx]
+        label = self.labels[idx]
+        return feature , label
+        #  self.c = self.c +1
+        # #  print(self.c)
+        # #  start_time = time.time()
+        #  ithlinestring = rdline(self.filepath , idx)
+        #  ithlinelist = (ithlinestring.split(','))
+        #  ithline = np.array(ithlinelist)
+        #  ithline = ithline.astype('float')
+        # #  print("--------")
+        # #  end_time = time.time()
+        # #  print(end_time - start_time)
+        #
+        #  featuresrownumpy = ithline[:-1]
+        #  featuresnumpy = featuresrownumpy.reshape(-1, self.featuresize)
+        #  features = torch.from_numpy(featuresnumpy.astype(float))
+        #  features = features.double()
+        #  labelnumpy = ithline[-1:]
+        #  label = torch.from_numpy(labelnumpy.astype(float))
+        #  label = label.double()
+        #
+        #  return features , label
 
 
 input_size = 2048
+
+# filename = './sample_output.csv'
+# trainfilename = './sample_output.csv'
+# testfilename = './sample_output.csv'
+trainfilename = '/tmp/anjan/output.csv'
+testfilename = '/tmp/anjan/output.csv'
+featuresize = 2048
+
+# Model1 smaller one, for proof of concept
+seq_len = 10
+hidden_size = 20
+num_layers = 2
 num_epochs = 2
 learning_rate = 0.01
 batch_size = 5
-filename = './sample_output.csv'
-# filename = '/tmp/anjan/output.csv'
-featuresize = 2048
-seq_len = 30
+
+# Model2
+seq_len = 10
+hidden_size = 45
+num_layers = 2
+num_epochs = 2
+learning_rate = 0.01
+batch_size = 5
+
+# Model3
+seq_len = 10
+hidden_size = 90
+num_layers = 2
+num_epochs = 2
+learning_rate = 0.01
+batch_size = 5
+
+
+# Model4
+seq_len = 10
+hidden_size = 20
+num_layers = 3
+num_epochs = 2
+learning_rate = 0.01
+batch_size = 5
+
+# Model5
+seq_len = 10
+hidden_size = 45
+num_layers = 3
+num_epochs = 2
+learning_rate = 0.01
+batch_size = 5
+
+
+# Model6
+seq_len = 10
 hidden_size = 90
 num_layers = 3
+num_epochs = 2
+learning_rate = 0.01
+batch_size = 5
 
-
-trainloaderT = FramesDataSet(filepath = filename , featuresize = featuresize)
+trainloaderT = FramesDataSet(filepath = trainfilename , featuresize = featuresize)
 trainloader = DataLoader(trainloaderT, batch_size= batch_size,shuffle=True)
 
-testloaderT = FramesDataSet(filepath = filename , featuresize = featuresize)
+testloaderT = FramesDataSet(filepath = testfilename , featuresize = featuresize)
 testloader = DataLoader(testloaderT, batch_size= batch_size,shuffle=True)
-
+#
+# from numpy import genfromtxt
+# trainnumpy = genfromtxt(trainfilename, delimiter=',')
 
 
 class VanilaLSTM(nn.Module):
@@ -133,7 +241,7 @@ params['learning_rate'] = learning_rate
 
 
 
-num_epochs = 2
+num_epochs = 14
 params['num_epochs'] = num_epochs
 # params['model'] = test
 

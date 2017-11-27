@@ -12,7 +12,7 @@ import torch.utils.data as utils
 import cv2
 import csv
 from torch.utils.data import Dataset, DataLoader
-
+import time
 
 def train(params):
     test = params['model']
@@ -28,6 +28,7 @@ def train(params):
     for epoch in range(num_epochs):
         print("Epoch number ----->" + str(epoch))
         for i, it in enumerate(trainloader):
+            st_time = time.time()
             # print(it[0].size())
             # print(it[1].size())
             images = it[0]
@@ -62,6 +63,9 @@ def train(params):
             loss.backward()
             # print("back")
             optimizer.step()
+            print(time.time() - st_time)
+
+            # In here if loss.data[0] is least, save the model. google how to save a model. I ma not sure
             # print("done")
             if (i+1) % 3 == 0:
                 # print(len(trainloader))
